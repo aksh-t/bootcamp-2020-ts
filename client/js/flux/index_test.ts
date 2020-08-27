@@ -1,9 +1,9 @@
-import { test } from "../test/runner.js";
+import { test } from "../test/runner";
 import {
   createStore,
   createFetchTodoListAction,
   createAddTodoAction
-} from "./index.js";
+} from "./index";
 
 function todo一覧を取得するアクションをdispatchしたときtodo一覧が更新される() {
   const initialState = { todoList: [] };
