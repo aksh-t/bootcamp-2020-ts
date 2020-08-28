@@ -1,3 +1,5 @@
+import { Action, State } from "../types"
+
 /**
  * Dispatcher
  */
@@ -6,7 +8,7 @@ class Dispatcher extends EventTarget {
     this.dispatchEvent(new CustomEvent("event"));
   }
 
-  subscribe(subscriber) {
+  subscribe(subscriber: EventListener) {
     this.addEventListener("event", subscriber);
   }
 }
@@ -15,31 +17,31 @@ class Dispatcher extends EventTarget {
  * Action Creator and Action Types
  */
 const FETCH_TODO_ACTION_TYPE = "Fetch todo list from server";
-export const createFetchTodoListAction = () => ({
+export const createFetchTodoListAction = ():Action => ({
   type: FETCH_TODO_ACTION_TYPE,
-  paylaod: undefined
+  payload: undefined
 });
 
 const ADD_TODO_ACTION_TYPE = "A todo addition to store";
-export const createAddTodoAction = todo => ({
+export const createAddTodoAction = (todo: any):Action => ({
   type: ADD_TODO_ACTION_TYPE,
   payload: todo
 });
 
 const UPDATE_TODO_ACTION_TYPE = "Update todo state";
-export const updateTodoAction = todo => ({
+export const updateTodoAction = (todo: any):Action => ({
   type: UPDATE_TODO_ACTION_TYPE,
   payload: todo
 });
 
 const REMOVE_TODO_ACTION_TYPE = "Remove todo";
-export const removeTodoAction = todo => ({
+export const removeTodoAction = (todo: any):Action => ({
   type: REMOVE_TODO_ACTION_TYPE,
   payload: todo
 });
 
 const CLEAR_ERROR = "Clear error from state";
-export const clearError = () => ({
+export const clearError = ():Action => ({
   type: CLEAR_ERROR,
   payload: undefined
 });
@@ -49,7 +51,7 @@ export const clearError = () => ({
  */
 const api = "http://localhost:3000/todo";
 
-const defaultState = {
+const defaultState: State = {
   todoList: [],
   error: null
 };
@@ -58,11 +60,11 @@ const headers = {
   "Content-Type": "application/json; charset=utf-8"
 };
 
-const reducer = async (prevState, { type, payload }) => {
+const reducer = async (prevState: State, { type, payload }: Action): Promise<State> => {
   switch (type) {
     case FETCH_TODO_ACTION_TYPE: {
       try {
-        const resp = await fetch(api).then(d => d.json());
+        const resp: {todoList: any[]} = await fetch(api).then(d => d.json());
         return { todoList: resp.todoList, error: null };
       } catch (err) {
         return { ...prevState, error: err };
@@ -118,7 +120,7 @@ const reducer = async (prevState, { type, payload }) => {
       return { ...prevState, error: null };
     }
     default: {
-      throw new Error("unexpected action type: %o", { type, payload });
+      throw new Error(`unexpected action type: ${{type, payload}}`);
     }
   }
 };
@@ -127,7 +129,7 @@ export function createStore(initialState = defaultState) {
   const dispatcher = new Dispatcher();
   let state = initialState;
 
-  const dispatch = async ({ type, payload }) => {
+  const dispatch = async ({ type, payload }: Action) => {
     console.group(type);
     console.log("prev", state);
     state = await reducer(state, { type, payload });
@@ -136,7 +138,7 @@ export function createStore(initialState = defaultState) {
     dispatcher.dispatch();
   };
 
-  const subscribe = subscriber => {
+  const subscribe = (subscriber: Function) => {
     dispatcher.subscribe(() => subscriber(state));
   };
 
