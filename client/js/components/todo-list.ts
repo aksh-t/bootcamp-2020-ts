@@ -1,14 +1,14 @@
 import Todo from "./todo";
-import { Props } from "../types"
+import { TodoItem } from "../types"
 
 interface TodoList {
   parent: Element;
   element: HTMLUListElement;
-  props: {todoList: Props[]}
+  props: {todoList: TodoItem[]}
 }
 
 class TodoList {
-  constructor(parent: Element, { todoList }: {todoList: Props[]}) {
+  constructor(parent: Element, { todoList }: {todoList: TodoItem[]}) {
     this.parent = parent;
     this.element = document.createElement("ul");
     this.element.className = "todo-list";

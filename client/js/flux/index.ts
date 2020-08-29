@@ -1,4 +1,4 @@
-import { Action, State } from "../types"
+import { State, TodoItem, TodoItemForAdd, TodoItemForUpdate, TodoItemForDelete, Action, FetchTodoListAction, AddTodoAction, UpdateTodoAction, RemoveTodoAction, ClearErrorAction } from "../types"
 
 /**
  * Dispatcher
@@ -17,31 +17,31 @@ class Dispatcher extends EventTarget {
  * Action Creator and Action Types
  */
 const FETCH_TODO_ACTION_TYPE = "Fetch todo list from server";
-export const createFetchTodoListAction = ():Action => ({
+export const createFetchTodoListAction = (): FetchTodoListAction => ({
   type: FETCH_TODO_ACTION_TYPE,
   payload: undefined
 });
 
 const ADD_TODO_ACTION_TYPE = "A todo addition to store";
-export const createAddTodoAction = (todo: any):Action => ({
+export const createAddTodoAction = (todo: TodoItemForAdd): AddTodoAction => ({
   type: ADD_TODO_ACTION_TYPE,
   payload: todo
 });
 
 const UPDATE_TODO_ACTION_TYPE = "Update todo state";
-export const updateTodoAction = (todo: any):Action => ({
+export const updateTodoAction = (todo: TodoItemForUpdate): UpdateTodoAction => ({
   type: UPDATE_TODO_ACTION_TYPE,
   payload: todo
 });
 
 const REMOVE_TODO_ACTION_TYPE = "Remove todo";
-export const removeTodoAction = (todo: any):Action => ({
+export const removeTodoAction = (todo: TodoItemForDelete): RemoveTodoAction => ({
   type: REMOVE_TODO_ACTION_TYPE,
   payload: todo
 });
 
 const CLEAR_ERROR = "Clear error from state";
-export const clearError = ():Action => ({
+export const clearError = (): ClearErrorAction => ({
   type: CLEAR_ERROR,
   payload: undefined
 });
@@ -64,14 +64,14 @@ const reducer = async (prevState: State, { type, payload }: Action): Promise<Sta
   switch (type) {
     case FETCH_TODO_ACTION_TYPE: {
       try {
-        const resp: {todoList: any[]} = await fetch(api).then(d => d.json());
+        const resp: {todoList: TodoItem[]} = await fetch(api).then(d => d.json());
         return { todoList: resp.todoList, error: null };
       } catch (err) {
         return { ...prevState, error: err };
       }
     }
     case UPDATE_TODO_ACTION_TYPE: {
-      const { id, ...body } = payload;
+      const { id, ...body } = payload as TodoItemForUpdate;
       try {
         const resp = await fetch(`${api}/${id}`, {
           method: "PATCH",
@@ -91,7 +91,7 @@ const reducer = async (prevState: State, { type, payload }: Action): Promise<Sta
       }
     }
     case REMOVE_TODO_ACTION_TYPE: {
-      const { id } = payload;
+      const { id } = payload as TodoItemForDelete;
       try {
         await fetch(`${api}/${id}`, {
           method: "DELETE",

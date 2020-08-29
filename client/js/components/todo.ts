@@ -1,16 +1,16 @@
 import store from "../store";
 import { updateTodoAction, removeTodoAction } from "../flux/index";
-import { Props } from "../types"
+import { TodoItem } from "../types"
 
 interface Todo {
   parent: Element;
   element: HTMLLIElement;
-  props: Props;
+  props: TodoItem;
   mounted: boolean;
 }
 
 class Todo {
-  constructor(parent: Element, { id, name, done }: Props) {
+  constructor(parent: Element, { id, name, done }: TodoItem) {
     this.parent = parent;
     this.element = document.createElement("li");
     this.element.className = "todo-item";

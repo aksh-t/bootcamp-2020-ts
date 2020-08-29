@@ -17,7 +17,7 @@ class TodoForm {
       e.preventDefault();
       
       if (!this.form) return
-      store.dispatch(createAddTodoAction({ name: this.form?.value }));
+      store.dispatch(createAddTodoAction({ name: this.form.value }));
       this.form.value = "";
     });
   }
